@@ -1,6 +1,5 @@
 import React from 'react';
 import { Alert } from 'shards-react';
-
 import fn from '../helperFn/boardFunctions';
 import Row from './row';
 import isEqual from 'lodash.isequal';
@@ -16,7 +15,6 @@ class Board extends React.Component {
       displayError: false,
       beginTimer: 0,
       timeUntilDismissed: 3,
-      complete: false,
     };
 
     this.handleKeyPress = this.handleKeyPress.bind(this);
@@ -24,7 +22,7 @@ class Board extends React.Component {
     this.handleTimeChange = this.handleTimeChange.bind(this);
     this.clearInterval = this.clearInterval.bind(this);
   }
-
+  
   generateBoard = populateGameGrid => {
     let gridNewly = fn.createGrid();
     fn.solve(gridNewly, fn.shuffle([1, 2, 3, 4, 5, 6, 7, 8, 9]));
@@ -40,7 +38,6 @@ class Board extends React.Component {
 
   componentDidMount() {
     const { populateGameGrid } = this.props;
-
     this.generateBoard(populateGameGrid);
   }
 
@@ -57,9 +54,7 @@ class Board extends React.Component {
 
     if (!isEqual(prevProps, this.props)) {
       if (prevProps.difficulty !== difficulty || newGame === true) {
-        this.setState({
-          complete: false,
-        });
+        this.props.setCom(false)
 
         this.generateBoard(populateGameGrid);
       } else if (solvedButton === true) {
@@ -68,9 +63,8 @@ class Board extends React.Component {
         });
       }
     } else if (!isEqual(prevState.grid, grid)) {
-      this.setState({ complete: fn.verifySudoku(this.state.grid) }, () =>
-        populateGameGrid(this.state.grid),
-      );
+      this.props.setCom(fn.verifySudoku(this.state.grid), () =>populateGameGrid(this.state.grid))
+      
     }
   }
 
@@ -126,14 +120,15 @@ class Board extends React.Component {
         </div>
       );
     }
-
-    const { grid, complete } = this.state;
-
+    const { grid } = this.state;
+    if(this.props.complete) {
+      this.props.pause();
+    }
     return (
       <div className='sudoku'>
         {error}
         <div className='winCondition'>
-          {complete
+          {this.props.complete
             ? 'You have successfully solved the sudoku!'
             : 'You are not done yet!'}
         </div>

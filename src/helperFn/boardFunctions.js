@@ -1,8 +1,9 @@
+import {useState} from 'react';
 function randomlyGeneratedValue(min, max) {
   return Math.floor(Math.random() * (max - min)) + min;
 }
-
 const removingEntries = (newGrid, difficulty) => {
+  
   let minToRemove;
   let maxToRemove;
   if (difficulty === 'Beginner') {
@@ -112,7 +113,6 @@ const verifySudoku = grid => {
   return true;
 };
 
-// https://stackoverflow.com/questions/6274339/how-can-i-shuffle-an-array fisher yates
 const shuffle = a => {
   for (let i = a.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
@@ -120,27 +120,30 @@ const shuffle = a => {
   }
   return a;
 };
-
 const solve = (grid, shuffled) => {
+
   for (let row = 0; row < 9; row++) {
     for (let col = 0; col < 9; col++) {
       if (grid[row][col] === null) {
         shuffled.forEach(choice => {
           if (isValid(grid, row, col, choice)) {
             grid[row][col] = choice;
-            solve(grid, shuffled);
-            // this is something that I added to stop the recursion when a solution is found otherwise it finds every solution!
+            solve(grid,shuffled)
             if (!verifySudoku(grid)) {
-              grid[row][col] = null;
+              grid[row][col] = null
+            } else {
+              return grid;
             }
           }
         });
-        return;
+        return grid ;
       }
     }
   }
-  return grid;
+  
+  
 };
+
 
 export default {
   randomlyGeneratedValue,
@@ -152,5 +155,5 @@ export default {
   isValid,
   verifySudoku,
   shuffle,
-  solve,
+  solve
 };

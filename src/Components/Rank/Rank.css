@@ -1,0 +1,6 @@
+.Rank {
+    position: fixed;
+    z-index: 1;
+    top:220px;
+    left:1000px;
+}
