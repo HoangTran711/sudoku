@@ -12,6 +12,7 @@
     "react-scripts": "^3.4.1",
     "sass": "^1.26.5",
     "shards-react": "^1.0.3",
+    "homepage":".",
     "styled-components": "^5.1.0",
     "use-timer": "^1.3.0"
   },
