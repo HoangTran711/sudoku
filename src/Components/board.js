@@ -1,14 +1,14 @@
-import React from 'react';
+import React,{useContext} from 'react';
 import { Alert } from 'shards-react';
 import fn from '../helperFn/boardFunctions';
 import Row from './row';
 import isEqual from 'lodash.isequal';
 import cloneDeep from 'lodash.clonedeep';
+import Data from './data/MyContext'
 
 class Board extends React.Component {
   constructor(props) {
     super(props);
-
     this.interval = null;
     this.state = {
       grid: [],
@@ -35,12 +35,11 @@ class Board extends React.Component {
       () => populateGameGrid(this.state.grid),
     );
   };
-
+  
   componentDidMount() {
     const { populateGameGrid } = this.props;
     this.generateBoard(populateGameGrid);
   }
-
   componentDidUpdate(prevProps, prevState) {
     const {
       newGame,
@@ -49,16 +48,15 @@ class Board extends React.Component {
       solvedGrid,
       solvedButton,
     } = this.props;
-
+    
     const { grid } = this.state;
-
     if (!isEqual(prevProps, this.props)) {
       if (prevProps.difficulty !== difficulty || newGame === true) {
         this.props.setCom(false)
-
         this.generateBoard(populateGameGrid);
       } else if (solvedButton === true) {
         this.setState({
+          ...this.state,
           grid: solvedGrid,
         });
       }
@@ -73,7 +71,6 @@ class Board extends React.Component {
     this.setState({ displayError: true, beginTimer: 0, timeUntilDismissed: 3 });
     this.interval = setInterval(this.handleTimeChange, 1000);
   }
-
   handleTimeChange() {
     if (this.state.beginTimer < this.state.timeUntilDismissed - 1) {
       this.setState({
@@ -91,19 +88,21 @@ class Board extends React.Component {
     clearInterval(this.interval);
     this.interval = null;
   }
-
+  componentWillUpdate(){
+    console.log(this.props.gone)
+  }
   handleKeyPress(key, row, col) {
     const gridCopy = cloneDeep(this.state.grid);
     if (key === null) {
       gridCopy[row].splice(col, 1, key);
-      this.setState({ grid: gridCopy });
+      this.props.setGone(gridCopy);
     } else {
       const digits = [1, 2, 3, 4, 5, 6, 7, 8, 9];
       if (digits.indexOf(parseInt(key)) === -1) {
         this.showInvalidKeyPress();
       } else {
         gridCopy[row].splice(col, 1, key);
-        this.setState({ grid: gridCopy });
+        this.setState({...this.state, grid: gridCopy });
       }
     }
   }

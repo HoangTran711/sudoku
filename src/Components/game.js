@@ -7,7 +7,6 @@ import {
   Container,
   Row,
   Col,
-  Button1,
   Modal,
   ModalBody,
   ModalHeader,
@@ -31,8 +30,10 @@ class Game extends React.Component {
       newGame: false,
       solvedButton: false,
       grid: [],
+      gridTemp:[],
       copyGrid: [],
       name:'',
+      gone:[],
       submit:false,
       controlTime: {
         pause: ()=>{},
@@ -44,6 +45,12 @@ class Game extends React.Component {
       openSolve:false
       
     };
+  }
+  setGone = (val) => {
+    this.setState({
+      ...this.state,
+      gone:val
+    })
   }
   setControlTime = (value) => {
     this.setState({
@@ -98,36 +105,14 @@ class Game extends React.Component {
     })
   }
   handleSudokuSolver = () => {
-    
+
     let currentGrid = cloneDeep(this.state.grid);
-    let gridCopy = cloneDeep(this.state.grid);
-    gridCopy = gridCopy.map(row =>
-      row.map(el => {
-        return typeof el === 'string' ? null : el;
-      }),
-    );
     currentGrid = currentGrid.map(row =>
       row.map(el => {
         return typeof el === 'string' ? null : el;
       }),
     );
-    fn.solve(gridCopy,shuffled)
-    let count = 0;
-    for(let row = 0 ; row < 9 ; row++ ){
-      if(count > 0){
-        break;
-      }
-      for(let col = 0 ; col <9; col++){
-        let row1 = parseInt(Math.random()*10 -1);
-        let col1 = parseInt(Math.random()*10 -1);
-        if(currentGrid[row1][col1] === null){
-          count++;
-          currentGrid[row1][col1] = gridCopy[row1][col1];
-          break;
-        }
-      }
-      
-    }
+    fn.solve(currentGrid,shuffled)
     this.setState({
       ...this.state,
       count: this.state.count-1,
@@ -166,7 +151,7 @@ class Game extends React.Component {
         submit: this.state.submit,
         setControlTime:this.setControlTime,
         controlTime:this.state.controlTime,
-        complete:this.state.complete,
+        complete:this.state.complete
       }}>
         <div className='game'>
         <div className='game-title'>
@@ -183,6 +168,8 @@ class Game extends React.Component {
               pause ={this.state.controlTime.pause}
               complete = {this.state.complete}
               setCom = {this.setCom}
+              gone= {this.state.gone}
+              setGone={this.setGone}
               
             />
         </div>:null}
